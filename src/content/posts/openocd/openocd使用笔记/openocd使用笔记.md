@@ -1,11 +1,11 @@
 ---
-title: openocd/openocd使用笔记
+title: openocd使用笔记
 published: 2025-03-28
 description: "记录一些openocd的基础操作."
 image: ""
 tags: ["嵌入式", "Openocd"]
 category: Embedded
-draft: true
+draft: false
 lang: ''
 ---
 
@@ -117,7 +117,7 @@ telnet一般用于只烧录不调试的场景。
 
 Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界面调整参数以控制烧录流程。
 
-- **OpenOCD Path**
+### OpenOCD Path
 
 首先，需要告知Eclipse openocd的安装路径，点击Eclipse菜单栏中的`Windows`->`Preferences`，在弹出的窗口中选择
 `Global OpenOCD Path`，向Folder填入openocd的安装路径，点击`Apply and Close`应用配置并关闭窗口
@@ -125,27 +125,35 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 > [!TIP]
 > 完成这步后我们成功解锁`${openocd_path}`通配符，使用`${openocd_path}`通配符时将直接指向openocd路径。
 
-![OpenOCD Path](/src/content/posts/openocd/Openocd%20Path.png)
+<div align="center">
+    <img width=550 alt="OpenOCD Path" src="/src/content/posts/openocd/Openocd Path.png"/>
+</div>
 
 接下来得开始配置Debug，打开`Debug Configuration`，双击`GDB OpenOCD Debugging`新建Debug配置，
 
-![Debug Configuration](/src/content/posts/openocd/Debug%20Configuration.png)
+<div align="center">
+    <img width=550 alt="Debug Configuration" src="/src/content/posts/openocd/Debug%20Configuration.png"/>
+</div>
 
 选中新建的Debug配置后，可以发现右侧面板中多了几个页面，包括`Main`，`Debugger`，`Startup`等，在这些页面中我们目前需要关注的是
 `Main`、`Debugger`页。
 
-- **Main**
+### Main
 
-向`C/C++ Application`需要填入elf文件的地址，可以是绝对路径或相对路径，相对路径的起始地址为项目的根目录（也可以使用
-`${project_loc}`、`${project_name}`等通配符代替一部分路径或文件名）。
+向`C/C++ Application`需要填入elf文件的地址，可以是绝对路径或相对路径，相对路径的起始地址为项目的根目，也可以使用
+`${project_loc}`、`${project_name}`等通配符代替一部分路径或文件名。
+
+> [!NOTE]
+> `${project_loc}`表示当前项目所在的目录的绝对路径，`${project_name}`表示当前项目名称
 
 > [!TIP]
-> 如果项目是先完成了编译再新建，那么`C/C++ Application`有可能会由Eclipse自动填充。
-> > `${project_loc}`表示当前项目所在的目录的绝对路径，`${project_name}`表示当前项目名称
+> 如果`Debug Configuration`是在完成了编译后再新建的，那么`C/C++ Application`有可能会由Eclipse自动填充。
 
-![Main]()
+<div align="center">
+    <img width=550 alt="C_CPP Application" src="/src/content/posts/openocd/C_CPP Application.png"/>
+</div>
 
-- **Debugger**
+### Debugger
 
 在`OpenOCD Setup`->`Config options`中加入openocd加载cfg文件的命令
 
@@ -160,8 +168,55 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 我们在使用Eclipse调试时，会经常用到`Debug Configuration`中的`Main`、`Debugger`和`Startup`页去控制烧录流程，下面简单介绍一下这些
 页中的内容。
 
-#### Main
+#### Main页说明
 
-#### Debugger
+<div align="center">
+    <img width=550 alt="Main" src="/src/content/posts/openocd/Main.png"/>
+</div>
 
-#### Startup
+- Project：工程名
+- C/C++ Application：工程elf文件路径（默认使用相对路径）
+- Build Before Launch：选择是否在调试前编译一次工程
+  - Enable auto build：在调试前编译一次工程
+  - Disable auto build：在调试前不编译工程
+  - Use workspace setting：根据`Windows`->`Preferences`->`Run/Debug`->`Launching`->`General Options`->`Build (if required) before launching`的选则进行处理
+
+<div align="center">
+    <img width=550 alt="Preference" src="/src/content/posts/openocd/Preference.png"/>
+</div>
+
+#### Debugger页说明
+
+<div align="center">
+    <img width=550 alt="Debugger" src="/src/content/posts/openocd/Debugger.png"/>
+</div>
+
+- Start OpenOCD locally：在Eclipse内部终端中启动openocd，如果不勾选该选项，则要在外部手动启动openocd
+- Executable path：设置openocd的程序路径，可以使用通配符`${openocd_path}`表示（如果已激活`${openocd_path}`通配符的话），也可以填写openocd的绝对路径
+- GDB port：设置gdb的端口号，无特殊需求不需要更改
+- Telnet port：设置telnet的端口号，无特殊需求不需要更改
+- Tcl port：设置tcl的端口号，无特殊需求不需要更改
+- Config options：设置openocd启动时的选项
+- Start GDB session：在Eclipse内部终端中启动gdb，如果不勾选该选项，则要在外部手动启动gdb
+- Executable name：设置gdb的程序名，需要提前在环境变量中添加gdb的路径
+- Other options：设置gdb启动时的选项
+- Commands：设置gdb启动时执行的指令
+- Host name or IP address：设置gdb要连接的地址
+- Port number：设置gdb要连接的端口号
+- Force thread list update on suspend：设置是否在暂停时更新线程列表，一般只在多线程场景才有用
+
+#### Startup页说明
+
+<div align="center">
+    <img width=550 alt="Startup" src="/src/content/posts/openocd/Startup.png"/>
+</div>
+
+- Initial Reset：设置在初始化前是否Reset
+- Enable Arm semihosting：设置是否使用Arm semihosting
+- Load symbols：设置是否向gdb加载elf中的符号
+- Load executable：设置是否向flash中加载elf中的代码，会触发openocd的默认下载流程
+- Debug in RAM：设置在RAM中调试程序
+- Pre-run/Restart reset：设置在启动前是否Reset
+- Set program counter at：设置PC指针的值
+- Set breakpoint at：设置断点位置
+- Continue：设置在进入调试后是否直接全速运行

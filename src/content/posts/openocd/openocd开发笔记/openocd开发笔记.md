@@ -1,5 +1,5 @@
 ---
-title: openocd/openocd开发笔记
+title: openocd开发笔记
 published: 2025-04-01
 description: 'openocd的开发笔记'
 image: ''
