@@ -9,8 +9,6 @@ draft: false
 lang: ''
 ---
 
-# 使用openocd
-
 最近我在研究开源调试器工具openocd时了解一些有趣的知识，写下本文章记录一下openocd的基础使用方法。
 
 openocd作为一个命令行程序，它可以在命令行上运行，或者嵌入一些程序中使用，比如Eclipse或VSCode。
@@ -126,13 +124,13 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 > 完成这步后我们成功解锁`${openocd_path}`通配符，使用`${openocd_path}`通配符时将直接指向openocd路径。
 
 <div align="center">
-    <img width=550 alt="OpenOCD Path" src="/src/content/posts/openocd/Openocd Path.png"/>
+    <img width=550 alt="OpenOCD Path" src="/src/content/posts/openocd/openocd使用笔记/Openocd Path.png"/>
 </div>
 
 接下来得开始配置Debug，打开`Debug Configuration`，双击`GDB OpenOCD Debugging`新建Debug配置，
 
 <div align="center">
-    <img width=550 alt="Debug Configuration" src="/src/content/posts/openocd/Debug%20Configuration.png"/>
+    <img width=550 alt="Debug Configuration" src="/src/content/posts/openocd/openocd使用笔记/Debug%20Configuration.png"/>
 </div>
 
 选中新建的Debug配置后，可以发现右侧面板中多了几个页面，包括`Main`，`Debugger`，`Startup`等，在这些页面中我们目前需要关注的是
@@ -150,7 +148,7 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 > 如果`Debug Configuration`是在完成了编译后再新建的，那么`C/C++ Application`有可能会由Eclipse自动填充。
 
 <div align="center">
-    <img width=550 alt="C_CPP Application" src="/src/content/posts/openocd/C_CPP Application.png"/>
+    <img width=550 alt="C_CPP Application" src="/src/content/posts/openocd/openocd使用笔记/C_CPP Application.png"/>
 </div>
 
 ### Debugger
@@ -171,7 +169,7 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 #### Main页说明
 
 <div align="center">
-    <img width=550 alt="Main" src="/src/content/posts/openocd/Main.png"/>
+    <img width=550 alt="Main" src="/src/content/posts/openocd/openocd使用笔记/Main.png"/>
 </div>
 
 - Project：工程名
@@ -182,13 +180,13 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
   - Use workspace setting：根据`Windows`->`Preferences`->`Run/Debug`->`Launching`->`General Options`->`Build (if required) before launching`的选则进行处理
 
 <div align="center">
-    <img width=550 alt="Preference" src="/src/content/posts/openocd/Preference.png"/>
+    <img width=550 alt="Preference" src="/src/content/posts/openocd/openocd使用笔记/Preference.png"/>
 </div>
 
 #### Debugger页说明
 
 <div align="center">
-    <img width=550 alt="Debugger" src="/src/content/posts/openocd/Debugger.png"/>
+    <img width=550 alt="Debugger" src="/src/content/posts/openocd/openocd使用笔记/Debugger.png"/>
 </div>
 
 - Start OpenOCD locally：在Eclipse内部终端中启动openocd，如果不勾选该选项，则要在外部手动启动openocd
@@ -208,7 +206,7 @@ Eclipse封装了openocd + gdb的调试流程，可以通过Eclipse的配置界�
 #### Startup页说明
 
 <div align="center">
-    <img width=550 alt="Startup" src="/src/content/posts/openocd/Startup.png"/>
+    <img width=550 alt="Startup" src="/src/content/posts/openocd/openocd使用笔记/Startup.png"/>
 </div>
 
 - Initial Reset：设置在初始化前是否Reset
