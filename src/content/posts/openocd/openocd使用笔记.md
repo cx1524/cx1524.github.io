@@ -4,7 +4,7 @@ published: 2025-03-28
 description: "记录一些openocd的基础操作."
 image: ""
 tags: ["嵌入式", "Openocd"]
-category: Embedded
+category: 嵌入式
 draft: false
 lang: ''
 ---
@@ -53,7 +53,7 @@ openocd作为一个命令行程序，它可以在命令行上运行，或者嵌�
 
 接着，让gdb去连接openocd，
 
-> 别记错了，openocd提供给gdb的端口可是3333哦ˋ( ° ▽、° )
+> 别记错了哦，openocd提供给gdb的端口可是3333哦ˋ( ° ▽、° )
 
     target remote localhost:3333
 
