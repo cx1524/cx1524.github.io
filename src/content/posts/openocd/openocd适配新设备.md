@@ -5,7 +5,7 @@ description: '记录openocd适配新设备的一些知识'
 image: ''
 tags: ["嵌入式", "Openocd"]
 category: '嵌入式'
-draft: true
+draft: false
 lang: ''
 ---
 
@@ -70,6 +70,102 @@ openocd提供了一套API让我们能操作设备的内存地址，常用的有�
 - `target_read_memory`：向指定地址处写入n个32位数据；
 
 可以使用上述API对设备寄存器进行读写以实现烧录。
+
+## 以F402为例
+
+Q: 假设现在我们要让APM32F402适配OpenOCD，要做些什么？
+
+A: 我们首先要实现其基础功能——烧录与擦写，即实现`erase`和`write`。
+
+> [!IMPORTANT]
+> openocd的开发环境是在Linux下的，这里我们可以用WSL去模拟Linux环境。
+
+> [!TIP]
+> 如果想要监控openocd的运行流程，则可以在API中添加`LOG_USER`输出信息。
+
+
+
+首先先查清楚APM32F402的Flash信息以及烧写过程：
+
+给出以下Flash信息宏和结构体：
+
+```c
+#define FLASH_KEY  0x40022004
+#define FLASH_STS  0x4002200C
+#define FLASH_CTRL 0x40022010
+#define KEY1       0x45670123
+#define KEY2       0xCDEF89AB
+
+#define FLASH_STS_BSY       0x01
+#define FLASH_CTRL_PG       0x01
+#define FLASH_CTRL_PAGEERA  0x02
+#define FLASH_CTRL_MASSERA  0x03
+```
+
+其烧写流程如下：
+
+``` mermaid
+graph TD;
+  A[解锁Flash] --> B[等待Flash busy状态结束]
+  B --> C[置位CTRL寄存器中的PG位]
+  C --> D[向地址写入16位数]
+  D --> E[复位CTRL寄存器中的PG位]
+  E --> F{写入是否结束}
+  F --> |否| B
+  F --> |是| G[等待Flash busy状态结束]
+  G --> H[结束]
+```
+
+则在`write`API中添加如下代码：
+
+```c
+static int write(struct flash_bank *bank, const uint8_t *buffer,
+        uint32_t offset, uint32_t count)
+{
+    struct target *target = bank->target;
+    uint32_t status = 0;
+    for(;;)
+    {
+        if(target_read_u32(target, FLASH_STS, &status) == ERROR_OK)
+        {
+            if(status & FLASH_STS_BSY == 0)
+            {
+                break;
+            }
+        }
+
+        if(timeout-- <= 0)
+        {
+            return ERROR_FAIL;
+        }
+    }
+    uint32_t addr = bank->base + offset;
+    for(uint32_t i = 0; i < count; i++)
+    {
+        target_write_memory(addr, )
+    }
+}
+```
+
+其擦写流程如下：
+
+``` mermaid
+graph TD;
+  A[解锁Flash] --> B[等待Flash busy状态结束]
+  B --> C[置位CTRL寄存器中的PG位]
+  C --> D[向地址写入16位数]
+  D --> E[复位CTRL寄存器中的PG位]
+  E --> F{写入是否结束}
+  F --> |否| B
+  F --> |是| G[等待Flash busy状态结束]
+  G --> H[结束]
+```
+
+则在`erase`API中添加如下代码：
+
+```c
+
+```
 
 ## 附录
 
